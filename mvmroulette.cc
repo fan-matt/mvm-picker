@@ -4,7 +4,7 @@
 #include <time.h>
 #include <unordered_set>
 
-#define DEBUG
+// #define PRINT
 
 int* gen_map_array(int size)
 {
@@ -129,7 +129,8 @@ int main()
 
     std::vector<int*> combinations = c(pool_size, MVM_SIZE);
 
-#ifdef DEBUG
+
+#ifdef PRINT
     // Print
     std::cout << "Total Combinations: " << combinations.size() << std::endl;
     for(int i = 0; i < combinations.size(); i ++)
@@ -138,11 +139,21 @@ int main()
     }
 #endif
 
+
     srand(time(0));
     int random_choice = rand() % combinations.size();
 
     std::cout << "Random choice of friends to play MVM: Combination #" << random_choice << " of " << combinations.size() << std::endl;
     full_print_comb(combinations, random_choice, pool_size, PLAYERS);
+
+    // For fun: class selection
+    std::cout << "Play as: ";
+    const std::string CLASSES[] = {"Scout", "Soldier", "Pyro", "Demoman", "Heavy", "Engineer", "Medic", "Sniper", "Spy"};
+    for(int i = 0; i < MVM_SIZE; i ++)
+    {
+        std::cout << CLASSES[rand() % (sizeof(CLASSES) / sizeof(std::string))] << " ";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
