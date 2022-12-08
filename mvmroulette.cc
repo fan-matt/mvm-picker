@@ -6,11 +6,64 @@
 
 // #define PRINT
 
-int* gen_map_array(int size)
+int* gen_map_arr(int size);
+
+int* arr_cpy(int* to_copy, int size);
+
+std::string arr_to_str(int* to_string, int size);
+
+std::vector<std::string> comb_to_names(int* comb, const std::string* mapping, int size);
+
+std::vector<int*> c(int n, int k);
+
+void full_print_comb(std::vector<int*> combinations, int choice, int size, const std::string* mapping, std::string end = "\n");
+
+
+int main()
+{
+    int MVM_SIZE = 6;
+    const std::string PLAYERS[] = {"Ben", "Cameron", "Daniel", "Devon", "Matt", "Ming", "Rivu", "Sean", "Tim"};
+    int pool_size = sizeof(PLAYERS) / sizeof(std::string);
+
+    std::vector<int*> combinations = c(pool_size, MVM_SIZE);
+
+
+#ifdef PRINT
+    // Print
+    std::cout << "Total Combinations: " << combinations.size() << std::endl;
+    for(int i = 0; i < combinations.size(); i ++)
+    {
+        full_print_comb(combinations, i, pool_size, PLAYERS, "\n\n");
+    }
+#endif
+
+
+    srand(time(0));
+    int random_choice = rand() % combinations.size();
+
+    std::cout << "Random choice of friends to play MVM: Combination #" << random_choice << " of " << combinations.size() << std::endl;
+    full_print_comb(combinations, random_choice, pool_size, PLAYERS);
+
+    // For fun: class selection
+    std::cout << "Play as: ";
+    const std::string CLASSES[] = {"Scout", "Soldier", "Pyro", "Demoman", "Heavy", "Engineer", "Medic", "Sniper", "Spy"};
+    for(int i = 0; i < MVM_SIZE; i ++)
+    {
+        std::cout << CLASSES[rand() % (sizeof(CLASSES) / sizeof(std::string))] << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+
+
+
+int* gen_map_arr(int size)
 {
     int* to_return = new int[size]{0};
     return  to_return;
 }
+
 
 int* arr_cpy(int* to_copy, int size)
 {
@@ -24,6 +77,7 @@ int* arr_cpy(int* to_copy, int size)
     return to_return;
 }
 
+
 std::string arr_to_str(int* to_string, int size)
 {
     std::string to_return = "";
@@ -34,6 +88,7 @@ std::string arr_to_str(int* to_string, int size)
 
     return to_return;
 }
+
 
 std::vector<std::string> comb_to_names(int* comb, const std::string* mapping, int size)
 {
@@ -49,6 +104,7 @@ std::vector<std::string> comb_to_names(int* comb, const std::string* mapping, in
 
     return to_return;
 }
+
 
 std::vector<int*> c(int n, int k)
 {
@@ -91,7 +147,7 @@ std::vector<int*> c(int n, int k)
         {
             for(int j = 0; j < n; j ++)
             {
-                int* temp = gen_map_array(n);
+                int* temp = gen_map_arr(n);
                 temp[j] = 1;
                 combinations.push_back(temp);
             }
@@ -101,7 +157,7 @@ std::vector<int*> c(int n, int k)
     return combinations;
 }
 
-void full_print_comb(std::vector<int*> combinations, int choice, int size, const std::string* mapping, std::string end = "\n")
+void full_print_comb(std::vector<int*> combinations, int choice, int size, const std::string* mapping, std::string end)
 {
     int* comb = combinations[choice];
 
@@ -119,41 +175,4 @@ void full_print_comb(std::vector<int*> combinations, int choice, int size, const
     }
 
     std::cout << end;
-}
-
-int main()
-{
-    int MVM_SIZE = 6;
-    const std::string PLAYERS[] = {"Ben", "Cameron", "Daniel", "Devon", "Matt", "Ming", "Rivu", "Sean", "Tim"};
-    int pool_size = sizeof(PLAYERS) / sizeof(std::string);
-
-    std::vector<int*> combinations = c(pool_size, MVM_SIZE);
-
-
-#ifdef PRINT
-    // Print
-    std::cout << "Total Combinations: " << combinations.size() << std::endl;
-    for(int i = 0; i < combinations.size(); i ++)
-    {
-        full_print_comb(combinations, i, pool_size, PLAYERS, "\n\n");
-    }
-#endif
-
-
-    srand(time(0));
-    int random_choice = rand() % combinations.size();
-
-    std::cout << "Random choice of friends to play MVM: Combination #" << random_choice << " of " << combinations.size() << std::endl;
-    full_print_comb(combinations, random_choice, pool_size, PLAYERS);
-
-    // For fun: class selection
-    std::cout << "Play as: ";
-    const std::string CLASSES[] = {"Scout", "Soldier", "Pyro", "Demoman", "Heavy", "Engineer", "Medic", "Sniper", "Spy"};
-    for(int i = 0; i < MVM_SIZE; i ++)
-    {
-        std::cout << CLASSES[rand() % (sizeof(CLASSES) / sizeof(std::string))] << " ";
-    }
-    std::cout << std::endl;
-
-    return 0;
 }
