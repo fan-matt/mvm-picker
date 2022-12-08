@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <time.h>
 #include <unordered_set>
 
 
@@ -101,7 +102,7 @@ int main()
     }
 
     // Print
-    std::cout << "Size: " << permutations.size() << std::endl;
+    std::cout << "Total Combinations: " << permutations.size() << std::endl;
     for(auto perm: permutations)
     {
         for(int i = 0; i < pool_size; i ++)
@@ -119,6 +120,29 @@ int main()
 
         std::cout << "\n" << std::endl;
     }
+
+
+    srand(time(0));
+
+    int random_choice = rand() % permutations.size();
+
+    std::cout << "Random choice of friends to play MVM: Combination #" << random_choice << std::endl;
+
+    int* perm = permutations[random_choice];
+
+    for(int i = 0; i < pool_size; i ++)
+    {
+        std::cout << perm[i];
+    }
+
+    std::vector<std::string> names = perm_to_names(perm, PLAYERS, pool_size);
+
+    std::cout << " ";
+    for(auto name: names)
+    {
+        std::cout << name << " ";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
