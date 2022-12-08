@@ -4,6 +4,7 @@
 #include <time.h>
 #include <unordered_set>
 
+#define DEBUG
 
 int* gen_map_array(int size)
 {
@@ -34,13 +35,13 @@ std::string arr_to_str(int* to_string, int size)
     return to_return;
 }
 
-std::vector<std::string> perm_to_names(int* perm, const std::string* mapping, int perm_size)
+std::vector<std::string> comb_to_names(int* comb, const std::string* mapping, int size)
 {
     std::vector<std::string> to_return;
 
-    for(int i = 0; i < perm_size; i ++)
+    for(int i = 0; i < size; i ++)
     {
-        if(perm[i])
+        if(comb[i])
         {
             to_return.push_back(mapping[i]);
         }
@@ -49,32 +50,28 @@ std::vector<std::string> perm_to_names(int* perm, const std::string* mapping, in
     return to_return;
 }
 
-int main()
+std::vector<int*> c(int n, int k)
 {
-    int MVM_SIZE = 6;
-    const std::string PLAYERS[] = {"Ben", "Cameron", "Daniel", "Devon", "Matt", "Ming", "Rivu", "Sean", "Tim"};
-    int pool_size = 9;
-
-    std::vector<int*> permutations;
+    std::vector<int*> combinations;
 
     std::unordered_set<std::string> exists;
 
     // This gets very big very quickly
-    for(int i = 0; i < MVM_SIZE; i ++)
+    for(int i = 0; i < k; i ++)
     {
         std::vector<int*> new_additions;
 
-        for(auto perm: permutations) {
-            for(int j = 0; j < pool_size; j ++)
+        for(auto comb: combinations) {
+            for(int j = 0; j < n; j ++)
             {
-                int* temp = arr_cpy(perm, pool_size);
+                int* temp = arr_cpy(comb, n);
 
                 if(temp[j] != 1)
                 {
                     temp[j] = 1;
 
                     // Create a string representation for table lookup
-                    std::string lookup_key = arr_to_str(temp, pool_size);
+                    std::string lookup_key = arr_to_str(temp, n);
 
                     // If doesn't already exist
                     if(exists.find(lookup_key) == exists.end())
@@ -86,63 +83,66 @@ int main()
             }
         }
 
-        // Add new additions to existing permutations array
-        permutations = new_additions;
+        // Add new additions to existing combinations array
+        combinations = new_additions;
 
         // Cover the case where we're just starting out
-        if(permutations.size() == 0)
+        if(combinations.size() == 0)
         {
-            for(int j = 0; j < pool_size; j ++)
+            for(int j = 0; j < n; j ++)
             {
-                int* temp = gen_map_array(pool_size);
+                int* temp = gen_map_array(n);
                 temp[j] = 1;
-                permutations.push_back(temp);
+                combinations.push_back(temp);
             }
         }
     }
 
-    // Print
-    std::cout << "Total Combinations: " << permutations.size() << std::endl;
-    for(auto perm: permutations)
+    return combinations;
+}
+
+void full_print_comb(std::vector<int*> combinations, int choice, int size, const std::string* mapping, std::string end = "\n")
+{
+    int* comb = combinations[choice];
+
+    for(int i = 0; i < size; i ++)
     {
-        for(int i = 0; i < pool_size; i ++)
-        {
-            std::cout << perm[i];
-        }
-
-        std::vector<std::string> names = perm_to_names(perm, PLAYERS, pool_size);
-
-        std::cout << " ";
-        for(auto name: names)
-        {
-            std::cout << name << " ";
-        }
-
-        std::cout << "\n" << std::endl;
+        std::cout << comb[i];
     }
 
-
-    srand(time(0));
-
-    int random_choice = rand() % permutations.size();
-
-    std::cout << "Random choice of friends to play MVM: Combination #" << random_choice << std::endl;
-
-    int* perm = permutations[random_choice];
-
-    for(int i = 0; i < pool_size; i ++)
-    {
-        std::cout << perm[i];
-    }
-
-    std::vector<std::string> names = perm_to_names(perm, PLAYERS, pool_size);
+    std::vector<std::string> names = comb_to_names(comb, mapping, size);
 
     std::cout << " ";
     for(auto name: names)
     {
         std::cout << name << " ";
     }
-    std::cout << std::endl;
+
+    std::cout << end;
+}
+
+int main()
+{
+    int MVM_SIZE = 6;
+    const std::string PLAYERS[] = {"Ben", "Cameron", "Daniel", "Devon", "Matt", "Ming", "Rivu", "Sean", "Tim"};
+    int pool_size = sizeof(PLAYERS) / sizeof(std::string);
+
+    std::vector<int*> combinations = c(pool_size, MVM_SIZE);
+
+#ifdef DEBUG
+    // Print
+    std::cout << "Total Combinations: " << combinations.size() << std::endl;
+    for(int i = 0; i < combinations.size(); i ++)
+    {
+        full_print_comb(combinations, i, pool_size, PLAYERS, "\n\n");
+    }
+#endif
+
+    srand(time(0));
+    int random_choice = rand() % combinations.size();
+
+    std::cout << "Random choice of friends to play MVM: Combination #" << random_choice << " of " << combinations.size() << std::endl;
+    full_print_comb(combinations, random_choice, pool_size, PLAYERS);
 
     return 0;
 }
